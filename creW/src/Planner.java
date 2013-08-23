@@ -2,6 +2,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -14,11 +16,11 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-public class Scheduler {
-	private static JPanel mainPanel;
+@SuppressWarnings("unused")
+public class Planner {
+	private static JPanel mainPanel = new JPanel();
 	
 	public static void main(String[] args) {
-
 		JFrame mainFrame = new JFrame("Cabin Crew Planning");
 		mainFrame.setSize(500,400);
 		mainFrame.add(getMainPanel());
@@ -27,9 +29,15 @@ public class Scheduler {
 	}
 
 	private static JPanel getMainPanel() {
-		mainPanel =  new JPanel();
+//		mainPanel =  new JPanel();
 		GridLayout mainPanelGrid = new GridLayout(1,2);
 		mainPanel.setLayout(mainPanelGrid);
+		
+//		JPanel flightPanel = getPanel(flights);
+//		JPanel crewPanel = getCrewPanel(crewList);
+//		mainPanel.add(flightPanel);
+//		mainPanel.add(crewPanel);
+		
 		setPanelsToMainPanel(getMainPanelComponents());
 		return mainPanel;
 		}
@@ -50,6 +58,7 @@ public class Scheduler {
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		JList flightList = new JList(flights);
 		flightList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		flightList.setSelectedIndex(0); //default selected flight
 		flightPanel.setLayout( new BorderLayout() );
 		flightPanel.add(flightList);
 		
@@ -65,11 +74,17 @@ public class Scheduler {
 		};
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		JList crewList = new JList(crews);
-		crewList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		crewList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		crewList.setSelectedIndices(new int[]{4,7,2});
 		crewPanel.setLayout(new BorderLayout());
 		crewPanel.add(crewList);
 		
+		// generic way
+//		List<JPanel> panelList = new ArrayList<JPanel>();
+//		panelList.add(flightPanel);
+//		panelList.add(crewPanel);
 		
 		return new JPanel[]{flightPanel, crewPanel};
 	}	
 }
+ 
