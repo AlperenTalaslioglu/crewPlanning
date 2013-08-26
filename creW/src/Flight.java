@@ -16,8 +16,8 @@ public class Flight {
 		this.flightNo = flightNo;
 	}
 	
-	public String toString() {
-		return "Flight [flightNo=" + flightNo + "]";
-	}
+//	public String toString() {
+//		return "Flight [flightNo=" + flightNo + "]";
+//	}
 
 }
