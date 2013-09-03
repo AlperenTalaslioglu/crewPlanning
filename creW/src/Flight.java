@@ -1,13 +1,12 @@
-
 public class Flight {
 	private String flightNo;
-	
-	//constructor
-	public Flight(String flightNo){
+
+	// constructor
+	public Flight(String flightNo) {
 		this.flightNo = flightNo;
 	}
 
-	//getter and setter
+	// getter and setter
 	public String getFlightNo() {
 		return flightNo;
 	}
@@ -15,9 +14,9 @@ public class Flight {
 	public void setFlightNo(String flightNo) {
 		this.flightNo = flightNo;
 	}
-	
-//	public String toString() {
-//		return "Flight [flightNo=" + flightNo + "]";
-//	}
+
+	public String toString() {
+		return flightNo;
+	}
 
 }

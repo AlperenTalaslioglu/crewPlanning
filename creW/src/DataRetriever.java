@@ -2,39 +2,39 @@ import java.util.ArrayList;
 
 public class DataRetriever {
 
-	protected static ArrayList<Flight> flights;
-	protected static ArrayList<Crew> crews;
+	protected static Flight[] flights;
+	protected static Crew[] crews;
 
 	public DataRetriever() {
-		this.flights = generateFlightsList();
-		this.crews = generateCrewsList();
+		this.flights = generateFlights();
+		this.crews = generateCrews();
 	}
 
-	private ArrayList<Crew> generateCrewsList() {
-		ArrayList<Crew> crewsList = new ArrayList<Crew>();
-		for(int i = 0; i<fetchCrewsList().length; i++){
-			crewsList.add(new Crew(fetchCrewsList()[i]));
-		}		
-		return crewsList;
+	public Crew[] generateCrews() {
+		Crew[] crewList = new Crew[fetchCrewsList().length];
+		for (int i = 0; i < fetchCrewsList().length; i++) {
+			crewList[i] = new Crew(fetchCrewsList()[i]);
+		}
+		return crewList;
 	}
 
-	private ArrayList<Flight> generateFlightsList() {
-		ArrayList<Flight> flightList = new ArrayList<Flight>();
+	public Flight[] generateFlights() {
+		Flight[] flightList = new Flight[fecthFlightsList().length];
 		for (int i = 0; i < fecthFlightsList().length; i++) {
-			flightList.add(new Flight(fecthFlightsList()[i]));
+			flightList[i] = new Flight(fecthFlightsList()[i]);
 		}
 		return flightList;
 	}
 
-	public static String[] fetchCrewsList() {
+	public String[] fetchCrewsList() {
 		return new String[] { "Michael E. Armagost", "Frederick J. Beetcher",
 				"Thomas D. Bentsen", "Edward F. Bindon", "Thomas D. Borgeson",
 				"Oliver J. Champeau", "Nolan S. Church", "Ransom E. Cundy",
 				"Thomas E. Edwards", "Russell G. Haskell", "George J. Holl",
-				"Bruce L. Hudson", "Allen G. Kalmon" };
+				"Bruce L. Hudson", "Allen G. Kalmon","SAVE CREWS" };
 	}
 
-	public static String[] fecthFlightsList() {
+	public String[] fecthFlightsList() {
 		return new String[] { "AA5544", "BB0099", "DD9912", "TR1134", "RR1257",
 				"GL1346" };
 	}

@@ -5,7 +5,7 @@ public class Crew {
 	public Crew(String crewName) {
 		this.crewName = crewName;
 	}
-	
+
 	// getter and setter
 	public String getCrewName() {
 		return crewName;
@@ -16,7 +16,7 @@ public class Crew {
 	}
 
 	public String toString() {
-		return "Crew [crewName=" + crewName + "]";
+		return crewName;
 	}
 
 }
