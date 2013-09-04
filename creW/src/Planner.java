@@ -31,6 +31,14 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+/**
+ * @author ALPERENT
+ *
+ */
+/**
+ * @author ALPERENT
+ *
+ */
 @SuppressWarnings("unused")
 public class Planner {
 	private static JPanel mainPanel = new JPanel();
@@ -53,6 +61,9 @@ public class Planner {
 		mainFrame.setVisible(true);
 	}
 
+	/**
+	 * TODO comment
+	 */
 	private static void generateMainPanel() {
 		// main panel layout
 		GridLayout mainPanelGrid = new GridLayout(1, 2);
@@ -75,13 +86,14 @@ public class Planner {
 
 		mainPanel.add(flightList);
 		mainPanel.add(crewList);
-		
-	
-	//		System.out.println(map);
-	
 	}
 
+	
+	/** TODO
+	 * @param data
+	 */
 	private static void initMap(DataRetriever data) {
+		
 		Crew tempCrew = null;
 		for (int i = 0; i < data.generateFlights().length; i++) {
 			map.put(data.fecthFlightsList()[i], tempCrew);
@@ -93,67 +105,55 @@ public class Planner {
 		TitledBorder roundedTitledBorder = new TitledBorder(roundedLineBorder,name);
 		return roundedTitledBorder;
 	}
-	
-	public static void selectCrew(){
-		Crew temp =  (Crew) map.get(crewList.getSelectedValue().toString());
-		System.out.println(temp);
-	}
 
-	public static void selectCrewOfFlight() {
-		
-		if (map.get(flightList.getSelectedValue().toString()) == null){
-			getCrewList();
+	@SuppressWarnings("unchecked")
+	public static void selectFlight(int i) {
+		flightList.setSelectedIndex(i);	
+		if(map.get(flightList.getSelectedValue().toString()) == null){
+			crewList.removeSelectionInterval(0, data.generateCrews().length);
 		}else{
-			getSelectedCrewList();
-		}
-		
+			crewList.setSelectedIndex(getCrewsIndex());
+		}		
 	}
 
-	private static void getSelectedCrewList() {
-		crewList.setSelectedIndex(getCrewsIndex());
-	}
-
+	//finding flight's crew's index to show selection
 	private static int getCrewsIndex() {
-		int index;
-		
-		System.out.println(map.get(flightList.getSelectedValue().toString()));
-		
-		return 0;
-	}
-
-	private static void getCrewList() {
-		crewList.removeSelectionInterval(0,data.generateCrews().length);
+		int index = 0;
+		for (int i = 0; i < data.fetchCrewsList().length; i++) {
+			if (data.fetchCrewsList()[i].equals((map.get(flightList
+					.getSelectedValue().toString()).toString()))) {
+				index = i;
+			}
+		}
+		return index;
 	}
 	
-
+	//Selecting crew and updating the map value of flight
+	public static void selectCrew() {
+		if(map.get(crewList.getSelectedValue()) == null){
+			if(map.get(flightList.getSelectedValue()) == null ){
+				map.put(flightList.getSelectedValue().toString(),crewList.getSelectedValue());
+			}			
+		}
+	}
+	
 }
-
-
-
-
 
 // JList Listeners
 
 class FlightListener implements ListSelectionListener {
 	@Override
 	public void valueChanged(ListSelectionEvent event) {
-		if (!event.getValueIsAdjusting()){// to prevent duplicate selection same element
-			Planner.selectCrewOfFlight();
-		}
+		Planner.selectFlight(((JList) event.getSource()).getSelectedIndex());
 	}
 }
 
 class CrewListener implements ListSelectionListener {
-	private static List crewList;
-	
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		
-		if (!e.getValueIsAdjusting()){// to prevent duplicate selection same element
+		if (!e.getValueIsAdjusting()) {// to prevent duplicate selection same element
 			Planner.selectCrew();
-	    }
+		}
 	}
-
-
 
 }
