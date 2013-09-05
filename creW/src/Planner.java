@@ -21,6 +21,7 @@ import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -36,8 +37,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 /**
- * @author ALPEREN TALASLIOÐLU
- *
+ * @author ALPEREN TALASLIOï¿½LU
+ * 
  */
 
 @SuppressWarnings("unused")
@@ -57,7 +58,8 @@ public class Planner {
 		mainFrame.setResizable(false);
 		// center the frame in screen
 		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-		mainFrame.setLocation((d.width - mainFrame.getSize().width) / 2,(d.height - mainFrame.getSize().height) / 2);
+		mainFrame.setLocation((d.width - mainFrame.getSize().width) / 2,
+				(d.height - mainFrame.getSize().height) / 2);
 		mainFrame.setVisible(true);
 	}
 
@@ -82,110 +84,108 @@ public class Planner {
 
 		// listener to match flight-crew
 		flightList.addListSelectionListener(new FlightListener());
-		CrewListener cList = new CrewListener();
-		crewList.addListSelectionListener(cList);
-		crewList.addMouseListener(cList);
-		
+
+		// for multiple selection and deselection
+		crewList.setSelectionModel(new DefaultListSelectionModel() {
+			private int firstIndex = -1;
+			private int lastIndex = -1;
+
+			public void setSelectionInterval(int indice1, int indice2) {
+				if (firstIndex == indice1 && lastIndex == indice2) {
+					if (getValueIsAdjusting()) {
+						setValueIsAdjusting(false);
+						setSelection(indice1, indice2);
+					}
+				} else {
+					firstIndex = indice1;
+					lastIndex = indice2;
+					setValueIsAdjusting(false);
+					setSelection(indice1, indice2);
+				}
+			}
+
+			private void setSelection(int indice1, int indice2) {
+				if (super.isSelectedIndex(indice1)) {
+					super.removeSelectionInterval(indice1, indice2);
+					Set<Crew> tempCrewRemoveSet = new HashSet<Crew>(crewList.getSelectedValuesList());
+					map.put(flightList.getSelectedValue().toString(),tempCrewRemoveSet);
+				} else {
+					super.addSelectionInterval(indice1, indice2);
+					Set<Crew> tempCrewSet = new HashSet<Crew>(crewList.getSelectedValuesList());
+					map.put(flightList.getSelectedValue().toString(),tempCrewSet);
+				}
+			}
+		});
+
 		mainPanel.add(flightList);
 		mainPanel.add(crewList);
 	}
 
-	
-	/** 
+	/**
 	 * @param data
 	 * Method for initializing the Map with Flight and Crew objects
 	 */
-	private static void initMap(DataRetriever data) {		
-		Crew tempCrew = null;
+	private static void initMap(DataRetriever data) {
 		for (int i = 0; i < data.generateFlights().length; i++) {
-			map.put(data.fecthFlightsList()[i], tempCrew);
+			map.put(data.flights[i].toString(), new HashSet());
 		}
 	}
 
-	/** 
+	/**
 	 * @param name
-	 * Method for generating border for panels with only parameter name
+	 *Method for generating border for panels with only parameter name
 	 */
 	private static Border generateBorder(String name) {
 		LineBorder roundedLineBorder = new LineBorder(Color.black, 1, true);
-		TitledBorder roundedTitledBorder = new TitledBorder(roundedLineBorder,name);
+		TitledBorder roundedTitledBorder = new TitledBorder(roundedLineBorder,
+				name);
 		roundedTitledBorder.setTitleJustification(TitledBorder.CENTER);
 		return roundedTitledBorder;
 	}
 
-	/** 
-	 * @param indice
-	 * Method called by FlightListListener to choose flight in the list
+	/**
+	 * @param selectedFlight
+	 * To get flight and it's crews
 	 */
-	@SuppressWarnings("unchecked")
-	public static void selectFlight(int indice) {
-		flightList.setSelectedIndex(indice);	
-		if(map.get(flightList.getSelectedValue().toString()) == null){
+	public static void getFlight(int selectedFlight) {
+		flightList.setSelectedIndex(selectedFlight);
+		Set<Crew> tempCrewSelectionRemoveSet = (Set<Crew>) map.get(flightList.getSelectedValue().toString());		
+
+		if (tempCrewSelectionRemoveSet.isEmpty()) {
 			crewList.removeSelectionInterval(0, data.generateCrews().length);
-		}else{
-			crewList.setSelectedIndex(getCrewsIndex());
-		}		
+		} else {
+			crewList.setSelectedIndices(getCrewsIndices());
+		}
 	}
 
 	/**
-	 * Method for finding flight's crew's index to show selection
+	 * To get indices of crews for a flight
 	 */
-	private static int getCrewsIndex() {
-		int index = 0;
-		for (int i = 0; i < data.fetchCrewsList().length; i++) {
-			if (data.fetchCrewsList()[i].equals((map.get(flightList
-					.getSelectedValue().toString()).toString()))) {
-				index = i;
+	private static int[] getCrewsIndices() {
+		Set s = (Set<Crew>) map.get(flightList.getSelectedValue().toString());
+		int[] selectedIndices = new int[s.size()];
+
+		for(int i = 0; i<s.size(); i++){
+			for(int j=0; j<data.fetchCrewsList().length; j++){
+				if(data.fetchCrewsList()[j].toString().equals((s.toArray()[i]).toString())){
+					selectedIndices[i] = j;
 				}
-		}
-		return index;
-	}
-	
-	/** 
-	 * Method for slecting crew and updating the map value of flight
-	 */
-	public static void selectCrew() {
-		if(map.get(crewList.getSelectedValue()) == null){
-			if(map.get(flightList.getSelectedValue()) == null){
-				map.put(flightList.getSelectedValue().toString(),crewList.getSelectedValue());
 			}			
-		}
-		System.out.println(Planner.map);
+		}		
+		return selectedIndices;
 	}
-	
+
 }
 
-/** 
- * Listener classes of CrewList and FlightList 
+/**
+ * Listener class of FlightList
  */
 
-class FlightListener implements ListSelectionListener  {
+class FlightListener implements ListSelectionListener {
 	@Override
 	public void valueChanged(ListSelectionEvent event) {
-		Planner.selectFlight(((JList) event.getSource()).getSelectedIndex());
-	}
-}
-
-class CrewListener extends MouseAdapter implements ListSelectionListener {
-	public static int counter = 0; // counter for unsellect option
-	
-	@Override
-	public void valueChanged(ListSelectionEvent e) {
-		if (!e.getValueIsAdjusting()) {// to prevent duplicate selection same element in list click
-			Planner.selectCrew();
+		if (!event.getValueIsAdjusting()) {// to prevent duplicate selection same element in list click
+			Planner.getFlight(((JList) event.getSource()).getSelectedIndex());
 		}
 	}
-	
-
-    /* (non-Javadoc)
-     * @see java.awt.event.MouseAdapter#mousePressed(java.awt.event.MouseEvent)
-     */
-    public void mousePressed(MouseEvent e) {
-       	counter++;
-    	if(((counter%2) == 0) &&(counter > 0)){
-    		Planner.map.put((Planner.flightList.getSelectedValue().toString()), null);
-    		Planner.crewList.clearSelection();
-    	}
-     }
-
 }

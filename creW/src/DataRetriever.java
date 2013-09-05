@@ -31,7 +31,7 @@ public class DataRetriever {
 				"Thomas D. Bentsen", "Edward F. Bindon", "Thomas D. Borgeson",
 				"Oliver J. Champeau", "Nolan S. Church", "Ransom E. Cundy",
 				"Thomas E. Edwards", "Russell G. Haskell", "George J. Holl",
-				"Bruce L. Hudson", "Allen G. Kalmon","SAVE CREWS" };
+				"Bruce L. Hudson", "Allen G. Kalmon"};
 	}
 
 	public String[] fecthFlightsList() {
