@@ -1,4 +1,4 @@
 crewPlanning
 ============
 
-Crew Planning Application
+Crew Planning Application coded in Java. It is a basic internship task
